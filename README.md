@@ -40,3 +40,11 @@ pipeline picks the image repo path configured in pipeline from Artifactory and d
 
 # Metrics
 The base image of the pod contains prometheus configuration to pull the data from /metrics and logstash is configured to ship the data through Kafka topics to Elastic DB and visualize through Kibana.
+
+# Alternate Approach(non container based/VM Based deployment)
+
+The same Drone.yml will build the app and push the .jar to artifactory path. 
+
+Redhat Package Manager is used to build the image on top of Base image(with Centos and needed tools for telemetry) in one more Git Repo and the RPM is pushed to Artifactory.
+
+The package would be then configured in spinnaker pipeline to pick and deploy into an assigned goggle project.
