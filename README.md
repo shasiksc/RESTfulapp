@@ -15,6 +15,7 @@ http://localhost:8080/user/1
 
 
 //-------------------health-------------------------//
+
 http://localhost:8080/health
 
     {"status":"UP"}
@@ -43,8 +44,8 @@ The base image of the pod contains prometheus configuration to pull the data fro
 
 # Alternate Approach(non container based/VM Based deployment)
 
-The same Drone.yml will build the app and push the .jar to artifactory path. 
+The same Drone.yml will build the app and push the .jar to artifactory path.
 
 Redhat Package Manager is used to build the image on top of Base image(with Centos and needed tools for telemetry) in one more Git Repo and the RPM is pushed to Artifactory.
 
-The package would be then configured in spinnaker pipeline to pick and deploy into an assigned goggle project.
+The package would be then configured in spinnaker pipeline to pick and deploy into an assigned google project.
