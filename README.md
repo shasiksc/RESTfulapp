@@ -20,15 +20,8 @@ http://localhost:8080/health
 
     {"status":"UP"}
 
-//-------------------Create a User-------------------//
 
-/user/ POST
-
-//-------------------Update a User-------------------//
-/user/id PUT
-
-//-------------------Delete a User-------------------//
-/user/id DELETE
+![ChartTree](images/SwaggerDef.jpg)
 
 
 # Backend
