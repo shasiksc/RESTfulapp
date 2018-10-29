@@ -1,0 +1,77 @@
+pipeline:
+  restore_cache:
+    image: plugins/docker/drone/drone-s3-cache:2
+    pull: true
+    restore: true
+    secrets: [ cache_s3_server, cache_s3_access_key, cache_s3_secret_key, cache_s3_ca_cert ]
+
+  get_dependencies:
+    image: plugins/docker/tap/alpine-openjdk8-build:latest
+    environment:
+      JAVA_TOOL_OPTIONS: -Xmx3000M
+      GRADLE_USER_HOME: .gradle
+      GRADLE_OPTS: -Dorg.gradle.daemon=false -Dorg.gradle.workers.max=1 -Dorg.gradle.parallel=false
+    commands:
+      - ./gradlew downloadDependencies
+
+  rebuild_cache:
+    image: plugins/docker/drone/drone-s3-cache:2
+    rebuild: true
+    secrets: [ cache_s3_server, cache_s3_access_key, cache_s3_secret_key, cache_s3_ca_cert ]
+    mount:
+      - .gradle
+
+  flush_cache:
+    when:
+      event: push
+    image: plugins/docker/drone/drone-s3-cache:2
+    secrets: [ cache_s3_server, cache_s3_access_key, cache_s3_secret_key, cache_s3_ca_cert ]
+    flush: true
+    flush_age: 14
+
+  test:
+    image: plugins/docker/tap/alpine-openjdk8-build:latest
+    pull: true
+    environment:
+      JAVA_TOOL_OPTIONS: -Xmx3000M
+      GRADLE_USER_HOME: .gradle
+      GRADLE_OPTS: -Dorg.gradle.daemon=false -Dorg.gradle.workers.max=1 -Dorg.gradle.parallel=false
+    commands:
+      - ./gradlew check
+
+  build:
+    image: plugins/docker/tap/alpine-openjdk8-build:latest
+    pull: true
+    environment:
+      JAVA_TOOL_OPTIONS: -Xmx3000M
+      GRADLE_USER_HOME: .gradle
+      GRADLE_OPTS: -Dorg.gradle.daemon=false -Dorg.gradle.workers.max=1 -Dorg.gradle.parallel=false
+    commands:
+      - ./gradlew build distTar
+
+  publish-docker:
+    when:
+      event: push
+      branch: master
+    image: plugins/docker:17.05
+    registry: plugins/docker
+    repo: plugins/docker/app/restfulapp
+    dockerfile: Dockerfile
+    tags:
+      - "b${DRONE_BUILD_NUMBER}-${DRONE_COMMIT:0:8}"
+    username: svcpejkn001
+    secrets:
+      - source: artifactory_password
+        target: plugin_password
+
+secrets:
+  cache_s3_server:
+    path: secret/shared/drone/prod-secrets/cache_s3_server
+  cache_s3_access_key:
+    path: secret/shared/drone/prod-secrets/cache_s3_access_key
+  cache_s3_secret_key:
+    path: secret/shared/drone/prod-secrets/cache_s3_secret_key
+  cache_s3_ca_cert:
+    path: secret/shared/drone/prod-secrets/cache_s3_ca_cert
+  artifactory_password:
+    path: /secret/shared/tap/drone-secrets/ARTIFACTORY_USERID
