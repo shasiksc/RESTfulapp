@@ -1,4 +1,4 @@
-FROM docker.target.com/tap/alpine-jre
+FROM docker.Shasi.com/images/alpine-jre
 
 ADD build/distributions/restfulapp.tar /
 

@@ -1,9 +1,9 @@
 buildscript {
   repositories {
-    maven { url "https://binrepo.target.com/artifactory/platform" }
-    maven { url "https://binrepo.target.com/artifactory/jcenter" }
-    maven { url "https://binrepo.target.com/artifactory/gradle" }
-    maven { url "https://binrepo.target.com/artifactory/maven-central" }
+    maven { url "https://binrepo.localhost.com/artifactory/platform" }
+    maven { url "https://binrepo.localhost.com/artifactory/jcenter" }
+    maven { url "https://binrepo.localhost.com/artifactory/gradle" }
+    maven { url "https://binrepo.localhost.com/artifactory/maven-central" }
     jcenter()
     mavenCentral()
     maven {
